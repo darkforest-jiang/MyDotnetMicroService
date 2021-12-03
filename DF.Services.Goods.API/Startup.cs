@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DF.Helper.Consul;
 
 namespace DF.Services.Goods.API
 {
@@ -35,7 +36,7 @@ namespace DF.Services.Goods.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -54,6 +55,10 @@ namespace DF.Services.Goods.API
             {
                 endpoints.MapControllers();
             });
+
+            //·þÎñ×¢²áµ½Consul
+            var cosulSetting = Configuration.GetSection("ConsulSetting").Get<ConsulSetting>();
+            app.RegisterConsul(Configuration, lifetime, cosulSetting);
         }
     }
 }

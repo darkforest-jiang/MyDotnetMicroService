@@ -1,0 +1,82 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/goods",
+      "DownstreamScheme": "http",
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "localhost",
+      //    "Port": 39290
+      //  }
+      //],
+      "UpstreamPathTemplate": "/goods",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "ServiceName": "GoodsService",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin" //负载均衡，轮询机制 LeastConnection/RoundRobin/NoLoadBalancer/CookieStickySessions
+      },
+      "FileCacheOptions": { //Ocelot缓存
+        "TtlSeconds": 5, //缓存过期时间
+        "Region": "regionname" //缓冲区名称
+      },
+      "RateLimitOptions": { //限流
+        "ClientWhitelist": [ ], //白名单
+        "EnableRateLimiting": true, //是否限流
+        "Period": "5s", //限流的单位时间 1s，5m，1h，1d等
+        "PeriodTimespan": 2, //客户端达到请求上限多少秒后可以重试
+        "Limit": 1 //客户端在定义的时间内可以发出的最大请求数
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/order",
+      "DownstreamScheme": "http",
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "localhost",
+      //    "Port": 64056
+      //  }
+      //],
+      "UpstreamPathTemplate": "/order",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "ServiceName": "OrderService",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin" //负载均衡，轮询机制 LeastConnection/RoundRobin/NoLoadBalancer/CookieStickySessions
+      },
+      "FileCacheOptions": { //Ocelot缓存
+        "TtlSeconds": 5, //缓存过期时间
+        "Region": "regionname" //缓冲区名称
+      },
+      "RateLimitOptions": { //限流
+        "ClientWhitelist": [ ], //白名单
+        "EnableRateLimiting": true, //是否限流
+        "Period": "5s", //限流的单位时间 1s，5m，1h，1d等
+        "PeriodTimespan": 2, //客户端达到请求上限多少秒后可以重试
+        "Limit": 1 //客户端在定义的时间内可以发出的最大请求数
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:9417",
+    "ServiceDiscoveryProvider": { //服务发现Consul配置
+      "Scheme": "http",
+      "Host": "localhost",
+      "Port": 8500,
+      "Type": "Consul"
+    },
+    "RateLimitOptions": { //限流配置
+      "DisableRateLimitHeaders": false, //是否禁用X-Rate-Limit和Retry-After标头（请求达到上限时response header中的限制数和多少秒后能重试）
+      "QuotaExceededMessage": "too many requests...", //代表请求达到上限时返回给客户端的消息
+      "HttpStatusCode": 999, //代表请求达到上限时返回给客户端的HTTP状态代码
+      "ClientIdHeader": "Test" //可以允许自定义用于标识客户端的标头。默认情况下为“ ClientId”
+    },
+    "QoSOptions": { //polly超时/熔断
+      "ExceptionsAllowedBeforeBreaking": 3, //发生错误的次数
+      "DurationOfBreak": 10000, //代表熔断时间/s
+      "TimeoutValue": 5000 //超时时间/s
+    }
+  }
+}

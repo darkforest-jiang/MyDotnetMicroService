@@ -10,16 +10,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["DF.Services.Order.API/DF.Services.Order.API.csproj", "DF.Services.Order.API/"]
-RUN dotnet restore "DF.Services.Order.API/DF.Services.Order.API.csproj"
+COPY ["DF.APIGateway.Ocelot/DF.APIGateway.Ocelot.csproj", "DF.APIGateway.Ocelot/"]
+RUN dotnet restore "DF.APIGateway.Ocelot/DF.APIGateway.Ocelot.csproj"
 COPY . .
-WORKDIR "/src/DF.Services.Order.API"
-RUN dotnet build "DF.Services.Order.API.csproj" -c Release -o /app/build
+WORKDIR "/src/DF.APIGateway.Ocelot"
+RUN dotnet build "DF.APIGateway.Ocelot.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "DF.Services.Order.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "DF.APIGateway.Ocelot.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "DF.Services.Order.API.dll"]
+ENTRYPOINT ["dotnet", "DF.APIGateway.Ocelot.dll"]
